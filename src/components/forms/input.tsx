@@ -18,11 +18,11 @@ const Input: React.FC<InputProps> = ({
     <div className="my-8">
       <label
         htmlFor={name}
-        className="block text-sm font-medium leading-6 text-white"
+        className="block text-lg leading-6 text-white"
       >
         {label}
       </label>
-      <p className="mt-2 text-sm text-white" id={`${name}-description`}>
+      <p className="mt-2 text-xs text-white" id={`${name}-description`}>
         {description}
       </p>
       <div className="mt-2">
