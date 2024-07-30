@@ -1,0 +1,102 @@
+<div
+  class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg my-4">
+  <table class="min-w-full divide-y divide-gray-300 table-fixed">
+    <thead class="bg-gray-50">
+      <tr>
+        <ng-container *ngFor="let column of columnsToDisplay">
+          <th
+            class="font-[500] px-4 py-3 text-left text-sm text-gray-500 uppercase cursor-pointer"
+            (click)="setSort(column.key)">
+            <ng-container
+              *ngIf="checkboxColumns.includes(column.key); else textHeader">
+              <div class="align-checkbox">
+                <span> {{ column.value | underscoreToTitle }}</span>
+                <app-checkbox
+                  [isChecked]="checkAllObject[column.key]"
+                  (isCheckedChange)="
+                    onAllCheckboxChange($event, column.key)
+                  "></app-checkbox>
+              </div>
+            </ng-container>
+            <ng-template #textHeader>{{
+              column.value | underscoreToTitle
+            }}</ng-template>
+          </th>
+        </ng-container>
+
+        <ng-container *ngFor="let action of actionColumns">
+          <th *ngIf="action" scope="col" class="px-4 py-3 text-center w-40">
+            <span class="sr-only">Header for action columns</span>
+          </th>
+        </ng-container>
+        <th *ngIf="editAction" scope="col" class="px-4 py-3 text-center w-32">
+          <span class="sr-only">Header for Edit</span>
+        </th>
+        <th *ngIf="deleteAction" scope="col" class="px-4 py-3 text-center w-32">
+          <span class="sr-only">Header for Delete</span>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody class="divide-y divide-gray-200 bg-white w-full">
+      @for (rows of tableData | slice: startSlice : endSlice; track $index) {
+        <tr>
+          <ng-container *ngFor="let column of columnsToDisplay">
+            <td class="text-sm px-4 py-3">
+              <ng-container
+                *ngIf="checkboxColumns.includes(column.key); else textCell">
+                <app-checkbox
+                  [isChecked]="rows[column.key]"
+                  (isCheckedChange)="
+                    onCheckboxChange($event, rows, column.key)
+                  "></app-checkbox>
+              </ng-container>
+              <ng-template #textCell>
+                <app-title
+                  [title]="rows[column.key]"
+                  [description]="
+                    !column.extraKey ? null : rows[column.extraKey]
+                  " />
+              </ng-template>
+            </td>
+          </ng-container>
+
+          <ng-container *ngFor="let action of actionColumns">
+            <td class="px-4 py-3 text-sm text-center w-40">
+              <span
+                (click)="customAction(action, rows)"
+                class="text-blueDS-500 hover:text-blueDS-400 cursor-pointer font-[400]"
+                >{{ action }}</span
+              >
+            </td>
+          </ng-container>
+
+          <td *ngIf="editAction" class="px-4 py-3 text-sm text-center w-32">
+            <span
+              (click)="rowEdit(rows)"
+              class="text-blueDS-500 hover:text-blueDS-400 cursor-pointer font-[400]"
+              >{{ editLabel || 'Edit' }}</span
+            >
+          </td>
+
+          <td *ngIf="deleteAction" class="px-4 py-3 text-sm text-center w-32">
+            <span
+              (click)="rowDelete(rows)"
+              class="text-red-600 hover:text-red-400 cursor-pointer font-[400]"
+              >Delete</span
+            >
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (!tableData) {
+    <app-not-found class="mt-8" label="No result."></app-not-found>
+  }
+</div>
+
+<pagination
+  [dataCount]="this.tableData.length || 0"
+  [itemsPerPage]="itemsPerPage"
+  (setPageToDisplay)="setItemsDisplay($event)"></pagination>
